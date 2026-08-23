@@ -1,0 +1,20 @@
+# Çevre Değişkenleri ve Gizli Bilgiler
+.env
+
+# SQLite Yerel Veritabanı (Kimsenin senin geçmişini görmemesi için)
+bot_database.db
+*.sqlite3
+
+# Python Önbellek Dosyaları
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Sanal Ortam (Virtual Environment)
+venv/
+env/
+.venv/
+
+# IDE Dosyaları (VSCode, PyCharm vb.)
+.vscode/
+.idea/

@@ -1,0 +1,38 @@
+name: Sanal Arkadas Bot CI
+
+# Sadece ana dala push edildiğinde veya pull request açıldığında çalışır
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  test-ve-dogrula:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Kodları GitHub sunucusuna çek
+    - name: Depoyu Klonla
+      uses: actions/checkout@v3
+
+    # 2. Python'u kur
+    - name: Python 3.11 Kurulumu
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    # 3. Bağımlılıkları yükle (Kendi yazdığın requirements.txt'yi okur)
+    - name: Bağımlılıkları Yükle
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-asyncio
+
+    # 4. Sahte çevresel değişkenlerle (güvenlik için) Testleri Çalıştır
+    - name: Pytest ile Otomatik Testleri Koş
+      env:
+        TELEGRAM_BOT_TOKEN: "otomasyon_test_tokeni"
+        LLM_API_KEY: "otomasyon_test_anahtari"
+      run: |
+        pytest tests/ -v
