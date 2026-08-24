@@ -34,5 +34,6 @@ jobs:
       env:
         TELEGRAM_BOT_TOKEN: "otomasyon_test_tokeni"
         LLM_API_KEY: "otomasyon_test_anahtari"
+        PYTHONPATH: "." # <-- SUNUCUYU KÖR OLMAKTAN KURTARAN SATIR
       run: |
         pytest tests/ -v
