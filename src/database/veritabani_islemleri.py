@@ -1,13 +1,19 @@
 import os
+from dotenv import load_dotenv # BUNU EKLEDİK
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from src.database.models import Base, Kullanici, Mesaj
 from logger import logger
 
+# Önce .env dosyasını zorla okutuyoruz ki sistem boşluğa düşmesin
+load_dotenv()
+
 DB_URL = os.getenv("DATABASE_URL", "sqlite:///bot_database.db")
 engine = create_engine(DB_URL)
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine, expire_on_commit=False)
+
+
 
 def kullanici_sayisini_getir():
     session = Session()
