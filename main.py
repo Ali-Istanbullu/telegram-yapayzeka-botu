@@ -11,9 +11,18 @@ app = FastAPI(title="Sanal Arkadaş API")
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "senin_bot_tokenin")
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+TELEGRAM_WEBHOOK_SECRET = os.getenv("TELEGRAM_WEBHOOK_SECRET")
 
 @app.post("/webhook")
 async def telegram_webhook(request: Request):
+    # --- KİMLİK DOĞRULAMA: İstek gerçekten Telegram'dan mı geliyor? ---
+    if TELEGRAM_WEBHOOK_SECRET:
+        gelen_token = request.headers.get("X-Telegram-Bot-Api-Secret-Token")
+        if gelen_token != TELEGRAM_WEBHOOK_SECRET:
+            logger.warning("Webhook'a yetkisiz erişim denemesi tespit edildi!")
+            return {"status": "unauthorized"}
+    # -------------------------------------------------------------------
+
     logger.info("----- YENİ MESAJ TETİKLENDİ -----")
     try:
         veri = await request.json()

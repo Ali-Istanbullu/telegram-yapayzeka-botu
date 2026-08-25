@@ -2,7 +2,7 @@ import os
 import requests
 from logger import logger
 
-def yapay_zekadan_cevap_al(mesaj_paketi):
+def yapay_zekadan_cevap_al(mesaj_paketi, sicaklik=0.7):
     API_URL = os.getenv("LLM_API_URL")
     API_KEY = os.getenv("LLM_API_KEY")
     MODEL_ADI = os.getenv("LLM_MODEL_NAME")
@@ -14,7 +14,7 @@ def yapay_zekadan_cevap_al(mesaj_paketi):
     payload = {
         "model": MODEL_ADI,
         "messages": mesaj_paketi,
-        "temperature": 0.7
+        "temperature": sicaklik
     }
 
     try:

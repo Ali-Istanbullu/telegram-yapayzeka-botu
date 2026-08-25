@@ -10,8 +10,14 @@ class Kullanici(Base):
     # Benzersiz Telegram Kullanıcı Kimliği
     telegram_id = Column(BigInteger, primary_key=True) 
     
-    # Uzun Bellek (Mesajlar çok uzadığında buraya özet kaydedilecek)
+        # Uzun Bellek (Mesajlar çok uzadığında buraya özet kaydedilecek)
     konusma_ozeti = Column(Text, nullable=True)          
+
+    # Günlük Kota Takibi (RAM yerine kalıcı olsun diye - restart'ta sıfırlanmasın)
+    gunluk_mesaj_sayisi = Column(Integer, default=0, nullable=False)
+    gunluk_tarih = Column(String(10), nullable=True)  # "2026-08-25" formatında
+
+    # İlişki Bağlantısı: Bir kullanıcının birden çok mesajı olabilir          
 
     # İlişki Bağlantısı: Bir kullanıcının birden çok mesajı olabilir
     # cascade özelliği, kullanıcı sıfırlandığında mesajların da silinmesini sağlar
