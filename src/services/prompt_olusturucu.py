@@ -10,7 +10,7 @@ def prompt_hazirla(kullanici_mesaji, ozet_metni=None, son_mesajlar=None):
 
     # 1. Ana Karakterimiz (Persona)
     # Bu kısmı ileride botun karakterini değiştirmek istersen güncelleyebilirsin.
-        ana_karakter = (
+    ana_karakter = (
         "Sen samimi, esprili ve yardımsever bir sanal arkadaşsın. "
         "Karşısındakiyle resmi olmayan, günlük bir dille sohbet edersin. "
         "Cevapların KISA ve doğal olsun - gerçek bir arkadaş gibi birkaç cümleyle "
