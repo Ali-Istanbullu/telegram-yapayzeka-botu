@@ -42,8 +42,23 @@ def telegram_mesajini_isle(telegram_id, kullanici_mesaji):
     # Kilit zaten açıldı (adım 1'de). Burada patlayan HERHANGİ bir hata
     # kullanıcıyı kalıcı kilitli bırakmasın diye tüm süreç try/except içinde.
     try:
+        # ÖZEL KOMUT: /reset -> hem kısa hem uzun belleği temizler, normal akışa hiç girmez.
+        # LLM'e hiç gidilmediği için günlük kotadan düşürmüyoruz, sadece kilidi açıyoruz.
+        if kullanici_mesaji.strip().lower() == "/reset":
+            gecmisi_temizle(telegram_id)
+            ozeti_guncelle(telegram_id, None)
+            hata_durumunda_kilidi_ac(telegram_id)
+            return "Hafızamı sıfırladım, sıfırdan başlıyoruz! 🧹"
+
         # 2. VERİTABANI YAZMA
         kullanici = kullanici_getir_veya_olustur(telegram_id)
+        
+        if kullanici is None:
+            # DB anlık bir hata verdi (ör. bağlantı havuzu doldu). AttributeError'a
+            # düşüp genel "beklenmedik hata" mesajına düşmek yerine, burada net
+            # ve doğru bir mesajla erken çıkıyoruz.
+            hata_durumunda_kilidi_ac(telegram_id)
+            return "Veritabanına şu an ulaşamıyorum, birazdan tekrar dener misin?"
         mesaj_kaydet(telegram_id, rol="user", icerik=kullanici_mesaji)
 
         # =========================================================================
@@ -64,12 +79,11 @@ def telegram_mesajini_isle(telegram_id, kullanici_mesaji):
                 gecmisi_temizle(telegram_id)
                 ozeti_guncelle(telegram_id, yeni_ozet)
 
-                # Veritabanı temizlendiği için aşağıda hata çıkmasın diye kullanıcıyı tazele!
                 kullanici = kullanici_getir_veya_olustur(telegram_id)
+                if kullanici is None:
+                    hata_durumunda_kilidi_ac(telegram_id)
+                    return "Veritabanına şu an ulaşamıyorum, birazdan tekrar dener misin?"
 
-                # Temizlik, bu turun kullanıcı mesajını da sildi (içeriği zaten özete işlendi).
-                # Geçmişin karşılıksız bir "assistant" mesajıyla başlamaması için
-                # bu turun kullanıcı mesajını temizlenmiş tabloya yeniden yazıyoruz.
                 mesaj_kaydet(telegram_id, rol="user", icerik=kullanici_mesaji)
         # =========================================================================
 
@@ -97,4 +111,4 @@ def telegram_mesajini_isle(telegram_id, kullanici_mesaji):
         # Beklenmedik HERHANGİ bir hata: kilidi mutlaka aç, kullanıcı tekrar deneyebilsin.
         logger.error(f"Orkestra Şefinde beklenmedik hata (ID: {telegram_id}): {e}", exc_info=True)
         hata_durumunda_kilidi_ac(telegram_id)
-        return "Sistemde beklenmedik bir hata oluştu. Lütfen tekrar dener misin?"
+        return "Sistemde beklenmedik bir hata oluştu. Lütfen tekrar dener misin?" + str (e)

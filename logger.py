@@ -1,25 +1,28 @@
 import logging
 from logging.handlers import RotatingFileHandler
+import sys
 import os
 
-# Logların tutulacağı klasörü oluştur (Eğer yoksa)
 if not os.path.exists("logs"):
     os.makedirs("logs")
 
-# Logger nesnemizi oluşturuyoruz
 logger = logging.getLogger("SanalArkadasBot")
 logger.setLevel(logging.INFO)
 
-# RotatingFileHandler: Maksimum 1 MB boyutunda dosya yapar, sadece son 3 dosyayı tutar.
-# Bu sayede sunucu hafızası asla dolmaz!
-handler = RotatingFileHandler(
+formatter = logging.Formatter('%(asctime)s - %(module)s - %(levelname)s - %(message)s')
+
+# 1) Dosyaya yaz (local geliştirme için hâlâ faydalı)
+dosya_handler = RotatingFileHandler(
     "logs/sistem_loglari.log", maxBytes=1048576, backupCount=3, encoding="utf-8"
 )
+dosya_handler.setFormatter(formatter)
 
-# Profesyonel log formatı: Yıl-Ay-Gün Saat - Dosya/Modül - Hata Tipi - Mesaj Detayı
-formatter = logging.Formatter('%(asctime)s - %(module)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
+# 2) stdout'a da yaz - Render (ve genel olarak her PaaS) sadece stdout/stderr'i
+# canlı log ekranında gösterir. Bu handler olmadan üretimdeki hiçbir
+# logger.error()/warning() çağrısı hiçbir yerde görünmüyordu.
+konsol_handler = logging.StreamHandler(sys.stdout)
+konsol_handler.setFormatter(formatter)
 
-# Handler'ı logger'a ekliyoruz (Çift eklemeyi önlemek için kontrol ediyoruz)
 if not logger.handlers:
-    logger.addHandler(handler)
+    logger.addHandler(dosya_handler)
+    logger.addHandler(konsol_handler)

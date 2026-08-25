@@ -19,7 +19,13 @@ def yapay_zekadan_cevap_al(mesaj_paketi, sicaklik=0.7):
 
     try:
         response = requests.post(API_URL, json=payload, headers=headers, timeout=15)
-        
+
+        # 429 = "Too Many Requests". Bu bir bağlantı sorunu DEĞİL, rate limit'e
+        # takılmak. Kullanıcıya doğru bilgiyi verelim ki "beklemek" gerektiğini anlasın.
+        if response.status_code == 429:
+            logger.warning(f"Groq rate limit'e takıldı (429). Sebep: {response.text}")
+            return False, "Şu an çok fazla istek geldi, birkaç saniye bekleyip tekrar yazar mısın?"
+
         if response.status_code != 200:
             logger.error(f"Groq Reddedildi! Kod: {response.status_code}, Sebep: {response.text}")
 
@@ -32,4 +38,4 @@ def yapay_zekadan_cevap_al(mesaj_paketi, sicaklik=0.7):
         return False, "Yapay zeka şu an çok yoğun, zaman aşımına uğradı. Birazdan tekrar dener misin?"
     except Exception as e:
         logger.error(f"Yapay zeka API bağlantı hatası: {e}")
-        return False, "Sistemde geçici bir bağlantı sorunu var. Lütfen daha sonra tekrar dene."+ str(e)
+        return False, "Sistemde geçici bir bağlantı sorunu var. Lütfen daha sonra tekrar dene."
