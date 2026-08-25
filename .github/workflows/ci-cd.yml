@@ -36,4 +36,4 @@ jobs:
         LLM_API_KEY: "otomasyon_test_anahtari"
         PYTHONPATH: "." # <-- SUNUCUYU KÖR OLMAKTAN KURTARAN SATIR
       run: |
-        pytest tests/ -v
+        pytest tests/ -v -v --continue-on-collection-errors

@@ -1,5 +1,6 @@
 import os
 import importlib
+import pytest
 
 def test_kritik_kutuphaneler_yuklu_mu():
     kutuphaneler = ["fastapi", "uvicorn", "sqlalchemy", "requests", "httpx", "dotenv"]
