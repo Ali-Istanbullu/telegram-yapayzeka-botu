@@ -32,4 +32,4 @@ def yapay_zekadan_cevap_al(mesaj_paketi, sicaklik=0.7):
         return False, "Yapay zeka şu an çok yoğun, zaman aşımına uğradı. Birazdan tekrar dener misin?"
     except Exception as e:
         logger.error(f"Yapay zeka API bağlantı hatası: {e}")
-        return False, "Sistemde geçici bir bağlantı sorunu var. Lütfen daha sonra tekrar dene. {str(e)}"
+        return False, "Sistemde geçici bir bağlantı sorunu var. Lütfen daha sonra tekrar dene."+{str(e)}
